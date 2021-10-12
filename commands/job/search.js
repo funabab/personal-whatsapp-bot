@@ -9,12 +9,7 @@ async function scrapIndeed(term, title, internship) {
 
   const reScrap =
     /^\s*window\.mosaic\.providerData\["mosaic-provider-jobcards"\]=(?<json>.+?);\s*$/m
-  const { data: page } = await axios.get(url, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
-    },
-  })
+  const { data: page } = await axios.get(url)
 
   const match = page.match(reScrap)
   if (!match) {
