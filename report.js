@@ -18,7 +18,7 @@ exports.sendReport = function (title, content, type = 'normal') {
   }
 
   const body = `
-  Mew report ${reportType}:
+  New report ${reportType}:
   ${title}
   ${content}
   `
