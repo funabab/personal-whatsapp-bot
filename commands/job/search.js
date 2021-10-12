@@ -1,0 +1,78 @@
+const axios = require('axios').default
+const striptags = require('striptags')
+
+async function scrapIndeed(term, title, internship) {
+  let url = `https://ng.indeed.com/jobs?q=${encodeURIComponent(term)}`
+  if (internship) {
+    url += '&jt=internship'
+  }
+
+  const reScrap =
+    /\<script\s+id="mosaic-data".+?\>.+?window\.mosaic\.providerData\["mosaic\-provider\-jobcards"\]=(.+?);\s+window\.mosaic\.providerData/
+  const { data: page } = await axios.get(url)
+
+  const match = page.replace(/\n/g, ' ').match(reScrap)
+  if (!match) {
+    throw new Error(`Indeed scrap regex didn't match... new changes? ${url}`)
+  }
+
+  const jsonData = JSON.parse(match[1])
+  const out = jsonData.metaData.mosaicProviderJobCardsModel.results.map(
+    (result) => {
+      return `
+    ${title}
+
+    *${result.title}*
+    Summary: _${
+      striptags(result.snippet).trim().replace(/\n/g, ' ') || 'not specified'
+    }_
+
+    Salary: *${
+      (result.salarySnippet && result.salarySnippet.text) || 'Undisclosed'
+    }*
+
+    *Company:* ${result.company}
+    *Location:* ${result.formattedLocation || '----'}
+    *Active:* ${result.formattedRelativeTime || '----'}
+    *Jop Type:* ${
+      (Array.isArray(result.jobTypes) && result.jobTypes.join(', ')) || 'job'
+    }
+
+    https://ng.indeed.com${result.viewJobLink}
+    `
+    }
+  )
+
+  return out
+}
+
+module.exports = async function (title = 'Job Alert!', internship = false) {
+  const keywords = [
+    'Javascript',
+    'PHP',
+    'Nodejs',
+    'React',
+    'Frontend',
+    'Backend',
+    'Data',
+    'Flutter',
+    'Laravel',
+    'Java',
+    'Python',
+    'Product',
+    'Designer',
+    'UI UX',
+    'Digital Marketing',
+  ]
+
+  const keywordIndex = Math.floor(Math.random() * keywords.length)
+  const jobs = await scrapIndeed(keywords[keywordIndex], title, internship)
+
+  if (!jobs.length) {
+    throw new Error(
+      `No job found for keyword: ${keywords[keywordIndex]}, intership: ${internship}`
+    )
+  }
+
+  return jobs[Math.floor(Math.random() * jobs.length)]
+}
