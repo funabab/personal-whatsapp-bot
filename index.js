@@ -28,6 +28,9 @@ ww.on(Events.AUTHENTICATION_FAILURE, (message) => {
   console.error('Unable to Authenticate', message)
   sendReport('Unable to Authenticate', message, 'error')
 })
+ww.on(Events.DISCONNECTED, () => {
+  sendReport('Bot Disconnected', 'info')
+})
 
 ww.on(Events.MESSAGE_RECEIVED, async (message) => {
   let { body } = message
