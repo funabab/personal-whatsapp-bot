@@ -4,6 +4,10 @@ const config = require('./config')
 const api = new Client(config.baseAPI.token)
 
 exports.sendReport = function (title, content, type = 'normal') {
+  if (process.env.NODE_ENV === 'development') {
+    return
+  }
+
   let reportType = ''
   switch (type) {
     case 'error':

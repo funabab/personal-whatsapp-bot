@@ -8,15 +8,16 @@ async function scrapIndeed(term, title, internship) {
   }
 
   const reScrap =
-    /\<script\s+id="mosaic-data".+?\>.+?window\.mosaic\.providerData\["mosaic\-provider\-jobcards"\]=(.+?);\s+window\.mosaic\.providerData/
+    /^\s*window\.mosaic\.providerData\["mosaic-provider-jobcards"\]=(?<json>.+?);\s*$/m
   const { data: page } = await axios.get(url)
 
-  const match = page.replace(/\n/g, ' ').match(reScrap)
+  const match = page.match(reScrap)
   if (!match) {
     throw new Error(`Indeed scrap regex didn't match... new changes? ${url}`)
   }
 
-  const jsonData = JSON.parse(match[1])
+  const jsonData = JSON.parse(match.groups.json)
+
   const out = jsonData.metaData.mosaicProviderJobCardsModel.results.map(
     (result) => {
       return `
@@ -48,18 +49,19 @@ async function scrapIndeed(term, title, internship) {
 
 module.exports = async function (title = 'Job Alert!', internship = false) {
   const keywords = [
-    'Javascript Developer',
-    'PHP Developer',
-    'Nodejs Developer',
-    'React Developer',
-    'Frontend Developer',
-    'Backend Developer',
+    'Javascript',
+    'PHP',
+    'Nodejs',
+    'React',
+    'Frontend',
+    'Backend',
     'Data',
-    'Flutter Developer',
-    'Laravel Developer',
-    'Java Developer',
-    'Python Developer',
-    'Product Designer',
+    'Flutter',
+    'Laravel',
+    'Java',
+    'Python',
+    'Product',
+    'Designer',
     'UI UX',
     'Digital Marketing',
   ]
