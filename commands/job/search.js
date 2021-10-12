@@ -1,51 +1,52 @@
 const axios = require('axios').default
 const striptags = require('striptags')
 
-async function scrapIndeed(term, title, internship) {
-  let url = `https://ng.indeed.com/jobs?q=${encodeURIComponent(term)}`
-  if (internship) {
-    url += '&jt=internship'
-  }
+// async function scrapIndeed(term, title, internship) {
+//   let url = `https://ng.indeed.com/jobs?q=${encodeURIComponent(term)}`
+//   if (internship) {
+//     url += '&jt=internship'
+//   }
 
-  const reScrap =
-    /^\s*window\.mosaic\.providerData\["mosaic-provider-jobcards"\]=(?<json>.+?);\s*$/m
-  const { data: page } = await axios.get(url)
+//   const reScrap =
+//     /^\s*window\.mosaic\.providerData\["mosaic-provider-jobcards"\]=(?<json>.+?);\s*$/m
 
-  const match = page.match(reScrap)
-  if (!match) {
-    throw new Error(`Indeed scrap regex didn't match... new changes? ${url}`)
-  }
+//   const { data: page } = await axios.get(url)
 
-  const jsonData = JSON.parse(match.groups.json)
+//   const match = page.match(reScrap)
+//   if (!match) {
+//     throw new Error(`Indeed scrap regex didn't match... new changes? ${url}`)
+//   }
 
-  const out = jsonData.metaData.mosaicProviderJobCardsModel.results.map(
-    (result) => {
-      return `
-    ${title}
+//   const jsonData = JSON.parse(match.groups.json)
 
-    *${result.title}*
-    Summary: _${
-      striptags(result.snippet).trim().replace(/\n/g, ' ') || 'not specified'
-    }_
+//   const out = jsonData.metaData.mosaicProviderJobCardsModel.results.map(
+//     (result) => {
+//       return `
+//     ${title}
 
-    Salary: *${
-      (result.salarySnippet && result.salarySnippet.text) || 'Undisclosed'
-    }*
+//     *${result.title}*
+//     Summary: _${
+//       striptags(result.snippet).trim().replace(/\n/g, ' ') || 'not specified'
+//     }_
 
-    *Company:* ${result.company}
-    *Location:* ${result.formattedLocation || '----'}
-    *Active:* ${result.formattedRelativeTime || '----'}
-    *Jop Type:* ${
-      (Array.isArray(result.jobTypes) && result.jobTypes.join(', ')) || 'job'
-    }
+//     Salary: *${
+//       (result.salarySnippet && result.salarySnippet.text) || 'Undisclosed'
+//     }*
 
-    https://ng.indeed.com${result.viewJobLink}
-    `
-    }
-  )
+//     *Company:* ${result.company}
+//     *Location:* ${result.formattedLocation || '----'}
+//     *Active:* ${result.formattedRelativeTime || '----'}
+//     *Jop Type:* ${
+//       (Array.isArray(result.jobTypes) && result.jobTypes.join(', ')) || 'job'
+//     }
 
-  return out
-}
+//     https://ng.indeed.com${result.viewJobLink}
+//     `
+//     }
+//   )
+
+//   return out
+// }
 
 module.exports = async function (title = 'Job Alert!', internship = false) {
   const keywords = [
@@ -67,7 +68,15 @@ module.exports = async function (title = 'Job Alert!', internship = false) {
   ]
 
   const keywordIndex = Math.floor(Math.random() * keywords.length)
-  const jobs = await scrapIndeed(keywords[keywordIndex], title, internship)
+
+  const { data: jobs } = await axios.post(
+    'https://winter-sky-4bc9.cskwasu2019.workers.dev/',
+    {
+      title,
+      internship,
+      query: keywords[keywordIndex],
+    }
+  )
 
   if (!jobs.length) {
     throw new Error(
@@ -75,5 +84,5 @@ module.exports = async function (title = 'Job Alert!', internship = false) {
     )
   }
 
-  return jobs[Math.floor(Math.random() * jobs.length)]
+  return striptags(jobs[Math.floor(Math.random() * jobs.length)])
 }
