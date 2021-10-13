@@ -72,22 +72,24 @@ module.exports = async function (
     'Digital Marketing',
   ]
 
-  const keywordIndex =
+  keyword =
     (keyword && keyword.replace(/\+/g, ' ')) ||
-    Math.floor(Math.random() * keywords.length)
+    keywords[Math.floor(Math.random() * keywords.length)]
+
+  console.log('search keyword', keyword)
 
   const { data: jobs } = await axios.post(
     'https://winter-sky-4bc9.cskwasu2019.workers.dev/',
     {
       title,
       internship,
-      query: keywords[keywordIndex],
+      query: keyword,
     }
   )
 
   if (!jobs.length) {
     throw new Error(
-      `No job found for keyword: ${keywords[keywordIndex]}, intership: ${internship}`
+      `No job found for keyword: ${keyword}, intership: ${internship}`
     )
   }
 
