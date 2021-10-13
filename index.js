@@ -40,9 +40,10 @@ ww.on(Events.MESSAGE_CREATE, async (message) => {
 
   const chat = await message.getChat()
   const match = body
-    .replace(/\b@[\w]+\b/, '')
+    .replace(/@[\w\d]/, '')
     .trim()
     .match(reCmd)
+
   const words = body.split(' ').length
   const command = match && match.groups.cmd
 
@@ -70,7 +71,7 @@ ww.on(Events.MESSAGE_RECEIVED, async (message) => {
   const chat = await message.getChat()
   const mentioned = (mentions.find((contact) => contact.isMe) && true) || false
   const match = body
-    .replace(/\b@[\w]+\b/, '')
+    .replace(/@[\w]+/, '')
     .trim()
     .match(reCmd)
   const words = body.split(' ').length
