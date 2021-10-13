@@ -46,7 +46,7 @@ ww.on(Events.MESSAGE_CREATE, async (message) => {
     if (command && message.fromMe) {
       console.log('New message!')
       const cmdMsg = await commands(command)
-      ww.sendMessage(chat.id, cmdMsg)
+      chat.sendMessage(cmdMsg)
       return
     }
   } catch (err) {
