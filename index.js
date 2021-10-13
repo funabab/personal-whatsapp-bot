@@ -44,7 +44,7 @@ ww.on(Events.MESSAGE_CREATE, async (message) => {
   const command = match && match.groups.cmd
 
   try {
-    if (command && message.fromMe && words 1) {
+    if (command && message.fromMe && words === 1) {
       console.log('New message!')
       const cmdMsg = await commands(command)
       chat.sendMessage(cmdMsg)
