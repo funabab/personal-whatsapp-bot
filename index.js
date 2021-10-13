@@ -43,16 +43,31 @@ ww.on(Events.MESSAGE_RECEIVED, async (message) => {
   const words = body.split(' ').length
   const command = match && match.groups.cmd
 
-  if (
-    command &&
-    ((chat.isGroup && !message.fromMe && mentioned && words === 2) ||
-      (!chat.isGroup && words === 1))
-  ) {
-    const cmdMsg = await commands(command)
-    if (cmdMsg) {
-      await chat.sendSeen()
-      message.reply(cmdMsg)
+  try {
+    if (command && message.fromMe) {
+      const cmdMsg = await commands(command)
+      rww.sendMessage(chat.id, cmdMsg)
+      return
     }
+
+    if (
+      command &&
+      ((chat.isGroup && !message.fromMe && mentioned && words === 2) ||
+        (!chat.isGroup && words === 1))
+    ) {
+      const cmdMsg = await commands(command)
+      if (cmdMsg) {
+        await chat.sendSeen()
+        message.reply(cmdMsg)
+      }
+    }
+  } catch (err) {
+    console.error(err)
+    sendReport(
+      'Error occurred while processing chat command',
+      `${err.message}\n\n${err.stack}`,
+      'warning'
+    )
   }
 })
 

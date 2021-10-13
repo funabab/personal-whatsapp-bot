@@ -67,7 +67,7 @@ module.exports = async function commands(cmd) {
     console.error('Error occurred while processing cmd:', cmd)
     sendReport(
       `Error occurred while processing cmd: ${cmd}`,
-      err.message,
+      `${err.message}\n\n${err.stack}`,
       'warning'
     )
     return null
