@@ -40,10 +40,11 @@ ww.on(Events.MESSAGE_CREATE, async (message) => {
 
   const chat = await message.getChat()
   const match = body.match(reCmd)
+  const words = body.split(' ').length
   const command = match && match.groups.cmd
 
   try {
-    if (command && message.fromMe) {
+    if (command && message.fromMe && words.length === 1) {
       console.log('New message!')
       const cmdMsg = await commands(command)
       chat.sendMessage(cmdMsg)
