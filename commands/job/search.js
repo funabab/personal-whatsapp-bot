@@ -72,13 +72,7 @@ module.exports = async function (
     'Digital Marketing',
   ]
 
-  console.log('initial keyword', keyword)
-
-  keyword =
-    (keyword && keyword.replace(/\+/g, ' ')) ||
-    keywords[Math.floor(Math.random() * keywords.length)]
-
-  console.log('search keyword', keyword)
+  keyword = keyword || keywords[Math.floor(Math.random() * keywords.length)]
 
   const { data: jobs } = await axios.post(
     'https://winter-sky-4bc9.cskwasu2019.workers.dev/',
