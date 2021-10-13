@@ -32,7 +32,7 @@ ww.on(Events.DISCONNECTED, () => {
   sendReport('Bot Disconnected', 'info')
 })
 
-const reCmd = /\/(?<cmd>[a-zA-Z]{3,}\b)/
+const reCmd = /\/(?<cmd>[a-zA-Z]{3,}\b)(?<arg>[a-zA-Z]{2,})?/
 
 ww.on(Events.MESSAGE_CREATE, async (message) => {
   let { body } = message
@@ -45,8 +45,7 @@ ww.on(Events.MESSAGE_CREATE, async (message) => {
 
   try {
     if (command && message.fromMe && words === 1) {
-      console.log('New message!')
-      const cmdMsg = await commands(command)
+      const cmdMsg = await commands(command, [match.groups.arg])
       chat.sendMessage(cmdMsg)
       return
     }

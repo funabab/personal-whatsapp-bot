@@ -41,7 +41,7 @@ There is also */about* you can check out if you are curious 😉
 And yeah! I also reply DMs
 `
 
-module.exports = async function commands(cmd) {
+module.exports = async function commands(cmd, arg = []) {
   try {
     switch (cmd.toLowerCase()) {
       case 'course':
@@ -53,9 +53,9 @@ module.exports = async function commands(cmd) {
       case 'idea':
         return await ideaCmd()
       case 'job':
-        return await jobCmd()
+        return await jobCmd(...args)
       case 'internship':
-        return await internshipCmd()
+        return await internshipCmd(...args)
       case 'motivation':
         return await motivationCmd()
       case 'about':

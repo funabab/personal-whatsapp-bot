@@ -48,7 +48,11 @@ const striptags = require('striptags')
 //   return out
 // }
 
-module.exports = async function (title = 'Job Alert!', internship = false) {
+module.exports = async function (
+  title = 'Job Alert!',
+  internship = false,
+  keyword = null
+) {
   const keywords = [
     'Javascript',
     'PHP',
@@ -68,7 +72,9 @@ module.exports = async function (title = 'Job Alert!', internship = false) {
     'Digital Marketing',
   ]
 
-  const keywordIndex = Math.floor(Math.random() * keywords.length)
+  const keywordIndex =
+    (keyword && keyword.replace(/\+/g, ' ')) ||
+    Math.floor(Math.random() * keywords.length)
 
   const { data: jobs } = await axios.post(
     'https://winter-sky-4bc9.cskwasu2019.workers.dev/',

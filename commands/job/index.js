@@ -1,5 +1,5 @@
 const search = require('./search')
 
-module.exports = async function () {
-  return await search('Job Alert! 💼')
+module.exports = async function (keyword) {
+  return await search('Job Alert! 💼', false, keyword)
 }
