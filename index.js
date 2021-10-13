@@ -39,7 +39,7 @@ ww.on(Events.MESSAGE_RECEIVED, async (message) => {
   const mentions = await message.getMentions()
   const chat = await message.getChat()
   const mentioned = (mentions.find((contact) => contact.isMe) && true) || false
-  const match = body.match(/\b\/(?<cmd>[a-zA-Z]{3,})\b/)
+  const match = body.match(/\/(?<cmd>[a-zA-Z]{3,}\b)/)
   const words = body.split(' ').length
   const command = match && match.groups.cmd
 
