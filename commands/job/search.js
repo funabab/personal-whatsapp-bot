@@ -63,6 +63,7 @@ module.exports = async function (title = 'Job Alert!', internship = false) {
     'Python',
     'Product',
     'Designer',
+    'Blockchain',
     'UI UX',
     'Digital Marketing',
   ]
