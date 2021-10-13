@@ -41,7 +41,7 @@ There is also */about* you can check out if you are curious 😉
 And yeah! I also reply DMs
 `
 
-module.exports = async function commands(cmd, arg = []) {
+module.exports = async function commands(cmd, args = []) {
   try {
     switch (cmd.toLowerCase()) {
       case 'course':
