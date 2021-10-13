@@ -44,7 +44,7 @@ ww.on(Events.MESSAGE_CREATE, async (message) => {
   const command = match && match.groups.cmd
 
   try {
-    if (command && message.fromMe && words === 1) {
+    if (command && message.fromMe && (words === 1 || words === 2)) {
       const cmdMsg = await commands(command, [match.groups.arg])
       chat.sendMessage(cmdMsg)
       return
@@ -73,7 +73,10 @@ ww.on(Events.MESSAGE_RECEIVED, async (message) => {
   try {
     if (
       command &&
-      ((chat.isGroup && !message.fromMe && mentioned && words === 2) ||
+      ((chat.isGroup &&
+        !message.fromMe &&
+        mentioned &&
+        (words === 3 || words === 2)) ||
         (!chat.isGroup && words === 1))
     ) {
       const cmdMsg = await commands(command)
