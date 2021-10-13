@@ -39,12 +39,15 @@ ww.on(Events.MESSAGE_CREATE, async (message) => {
   body = body.trim()
 
   const chat = await message.getChat()
-  const match = body.match(reCmd)
+  const match = body
+    .replace(/\b@[\w]+\b/, '')
+    .trim()
+    .match(reCmd)
   const words = body.split(' ').length
   const command = match && match.groups.cmd
 
   try {
-    if (command && message.fromMe && (words === 1 || words === 2)) {
+    if (command && message.fromMe && words <= 2) {
       const cmdMsg = await commands(command, [match.groups.arg])
       chat.sendMessage(cmdMsg)
       return
@@ -66,18 +69,19 @@ ww.on(Events.MESSAGE_RECEIVED, async (message) => {
   const mentions = await message.getMentions()
   const chat = await message.getChat()
   const mentioned = (mentions.find((contact) => contact.isMe) && true) || false
-  const match = body.match(reCmd)
+  const match = body
+    .replace(/\b@[\w]+\b/, '')
+    .trim()
+    .match(reCmd)
   const words = body.split(' ').length
   const command = match && match.groups.cmd
 
   try {
     if (
       command &&
-      ((chat.isGroup &&
-        !message.fromMe &&
-        mentioned &&
-        (words === 3 || words === 2)) ||
-        (!chat.isGroup && (words === 1 || words === 2)))
+      words <= 2 &&
+      !message.fromMe &&
+      ((chat.isGroup && mentioned) || !chat.isGroup)
     ) {
       const cmdMsg = await commands(command)
       if (cmdMsg) {

@@ -72,6 +72,8 @@ module.exports = async function (
     'Digital Marketing',
   ]
 
+  console.log('initial keyword', keyword)
+
   keyword =
     (keyword && keyword.replace(/\+/g, ' ')) ||
     keywords[Math.floor(Math.random() * keywords.length)]
