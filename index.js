@@ -77,7 +77,7 @@ ww.on(Events.MESSAGE_RECEIVED, async (message) => {
         !message.fromMe &&
         mentioned &&
         (words === 3 || words === 2)) ||
-        (!chat.isGroup && words === 1))
+        (!chat.isGroup && (words === 1 || words === 2)))
     ) {
       const cmdMsg = await commands(command)
       if (cmdMsg) {
