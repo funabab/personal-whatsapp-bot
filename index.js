@@ -77,6 +77,8 @@ ww.on(Events.MESSAGE_RECEIVED, async (message) => {
   const words = body.split(' ').length
   const command = match && match.groups.cmd
 
+  console.log('word', match.groups, command)
+
   try {
     if (
       command &&
