@@ -32,6 +32,33 @@ ww.on(Events.DISCONNECTED, () => {
   sendReport('Bot Disconnected', 'info')
 })
 
+const reCmd = /\/(?<cmd>[a-zA-Z]{3,}\b)/
+
+ww.on(Events.MESSAGE_CREATE, async (message) => {
+  let { body } = message
+  body = body.trim()
+
+  const chat = await message.getChat()
+  const match = body.match(reCmd)
+  const command = match && match.groups.cmd
+
+  try {
+    if (command && message.fromMe) {
+      console.log('New message!')
+      const cmdMsg = await commands(command)
+      ww.sendMessage(chat.id, cmdMsg)
+      return
+    }
+  } catch (err) {
+    console.error(err)
+    sendReport(
+      'Error occurred while processing chat command',
+      `${err.message}\n\n${err.stack}`,
+      'warning'
+    )
+  }
+})
+
 ww.on(Events.MESSAGE_RECEIVED, async (message) => {
   let { body } = message
   body = body.trim()
@@ -39,17 +66,11 @@ ww.on(Events.MESSAGE_RECEIVED, async (message) => {
   const mentions = await message.getMentions()
   const chat = await message.getChat()
   const mentioned = (mentions.find((contact) => contact.isMe) && true) || false
-  const match = body.match(/\/(?<cmd>[a-zA-Z]{3,}\b)/)
+  const match = body.match(reCmd)
   const words = body.split(' ').length
   const command = match && match.groups.cmd
 
   try {
-    if (command && message.fromMe) {
-      const cmdMsg = await commands(command)
-      rww.sendMessage(chat.id, cmdMsg)
-      return
-    }
-
     if (
       command &&
       ((chat.isGroup && !message.fromMe && mentioned && words === 2) ||
