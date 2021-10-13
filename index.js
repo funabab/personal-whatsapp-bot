@@ -109,3 +109,5 @@ ww.on(Events.MESSAGE_RECEIVED, async (message) => {
 })
 
 ww.initialize()
+console.log('Bot Intialized!')
+console.log(`Mode: ${process.env.NODE_ENV || 'production'}`)
