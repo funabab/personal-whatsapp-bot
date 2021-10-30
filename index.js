@@ -4,11 +4,12 @@ const { Client, Events } = require('whatsapp-web.js')
 const qrcode = require('qrcode-terminal')
 const { sendReport } = require('./report')
 const { loadSession, saveSession } = require('./utils')
-const commands = require('./commands')
+const { CommandManager } = require('./command')
 
 const ww = new Client({
   session: loadSession(),
 })
+const cmdManager = new CommandManager()
 
 ww.on(Events.QR_RECEIVED, (qr) => {
   console.clear()
@@ -59,43 +60,26 @@ function parseCmd(input) {
 ww.on(Events.MESSAGE_CREATE, async (message) => {
   let { body } = message
 
-  const chat = await message.getChat()
-  const [cmd, arg] = parseCmd(formatCmdInput(body))
-
-  try {
-    if (cmd && message.fromMe) {
-      const cmdMsg = await commands(cmd, arg)
-      chat.sendMessage(cmdMsg)
-      return
-    }
-  } catch (err) {
-    console.error(err)
-    sendReport(
-      'Error occurred while processing chat command',
-      `${err.message}\n\n${err.stack}`,
-      'warning'
-    )
-  }
-})
-
-ww.on(Events.MESSAGE_RECEIVED, async (message) => {
-  let { body } = message
-
   const mentions = await message.getMentions()
   const chat = await message.getChat()
-  const mentioned = (mentions.find((contact) => contact.isMe) && true) || false
+  const mentioned = !!mentions.find((contact) => contact.isMe)
   const [cmd, arg] = parseCmd(formatCmdInput(body))
 
   try {
-    if (
-      cmd &&
-      !message.fromMe &&
-      ((chat.isGroup && mentioned) || !chat.isGroup)
-    ) {
-      const cmdMsg = await commands(cmd, arg)
-      if (cmdMsg) {
-        await chat.sendSeen()
-        message.reply(cmdMsg)
+    if (!cmd) {
+      return
+    }
+
+    if (message.fromMe) {
+      cmdManager.process(cmd, arg, (msgContent) => {
+        chat.sendMessage(msgContent)
+      })
+    } else {
+      if ((chat.isGroup && mentioned) || !chat.isGroup) {
+        cmdManager.process(cmd, arg, async (msgContent) => {
+          await chat.sendSeen()
+          message.reply(msgContent)
+        })
       }
     }
   } catch (err) {
@@ -108,6 +92,15 @@ ww.on(Events.MESSAGE_RECEIVED, async (message) => {
   }
 })
 
-ww.initialize()
-console.log('Bot Intialized!')
-console.log(`Mode: ${process.env.NODE_ENV || 'production'}`)
+console.log('Initializing...')
+cmdManager
+  .initialize()
+  .then(async () => {
+    await ww.initialize()
+    console.info('Bot Intialized!')
+    console.info(`Mode: ${process.env.NODE_ENV || 'production'}`)
+  })
+  .catch((err) => {
+    console.error(err)
+    sendReport('Unable to Initialize bot', err.message, 'error')
+  })

@@ -1,6 +1,10 @@
 const axios = require('axios').default
 
-module.exports = async function () {
+exports.helpCMD = function () {
+  return 'Get link to premium course avaible for free download'
+}
+
+exports.processCMD = async function () {
   const { data } = await axios.get(
     'https://www.reddit.com/r/udemyfreebies/new.json'
   )

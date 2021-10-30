@@ -1,6 +1,10 @@
 const axios = require('axios').default
 
-module.exports = async function () {
+exports.helpCMD = function () {
+  return 'Fastest way to get hackernews from here'
+}
+
+exports.processCMD = async function () {
   const newsType = ['topstories', 'newstories', 'beststories'][
     Math.floor(Math.random() * 3)
   ]

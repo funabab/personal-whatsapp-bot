@@ -1,6 +1,10 @@
 const axios = require('axios').default
 
-module.exports = async function (jokeType) {
+exports.helpCMD = function () {
+  return 'Programming Jokes... (your can optionally also pass *dark* as an arguement for the dark side)\ne.g /humor dark'
+}
+
+exports.processCMD = async function (jokeType) {
   const { data: joke } = await axios.get(
     `https://v2.jokeapi.dev/joke/${
       jokeType === 'dark' ? 'Dark' : 'Programming'

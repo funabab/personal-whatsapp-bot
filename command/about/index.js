@@ -1,6 +1,6 @@
 const package = require('../../package.json')
 
-module.exports = function () {
+exports.processCMD = function () {
   const authors = Object.keys(package.dependencies)
     .map((key) => {
       const depPackage = require(`${key}/package.json`)

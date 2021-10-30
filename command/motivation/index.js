@@ -1,6 +1,10 @@
 const quotes = require('./data/quotes.json')
 
-module.exports = function () {
+exports.helpCMD = function () {
+  return 'Some dev quotes to keep you motivated'
+}
+
+exports.processCMD = function () {
   const quote = quotes[Math.floor(Math.random() * quotes.length)]
   return `
     Stay Motivated! ✍️
