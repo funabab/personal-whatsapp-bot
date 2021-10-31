@@ -4,7 +4,7 @@ exports.helpCMD = function () {
   return 'Get link to premium course avaible for free download'
 }
 
-exports.processCMD = async function () {
+exports.processCMD = async function (arg) {
   const { data } = await axios.get(
     'https://www.reddit.com/r/udemyfreebies/new.json'
   )
@@ -15,12 +15,21 @@ exports.processCMD = async function () {
     throw new Error('No course found!')
   }
 
-  const { data: course } = result[Math.floor(Math.random() * result.length)]
+  const courses =
+    arg === 'all'
+      ? result.map((item) => item.data)
+      : [result[Math.floor(Math.random() * result.length)].data]
 
   return `
   *FREE COURSE!* 🚨
-  ${course.title}
 
-  ${course.url}
+  ${courses
+    .map(
+      (course) =>
+        `\n${course.title}${'\n'.repeat(courses.length > 1 ? 1 : 2)}${
+          course.url
+        }\n\n${(courses.length > 1 && `${'='.repeat(10)}\n`) || ''}`
+    )
+    .join('')}
   `
 }
