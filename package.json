@@ -9,9 +9,8 @@
     "dotenv": "^10.0.0",
     "qrcode-terminal": "^0.12.0",
     "striptags": "^3.2.0",
-    "whatsapp-web.js": "^1.14.1"
+    "whatsapp-web.js": "^1.15.3"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "node .",
     "dev": "NODE_ENV=development node ."
